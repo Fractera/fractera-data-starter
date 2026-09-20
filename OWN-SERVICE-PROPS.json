@@ -17,6 +17,11 @@
     "example": ".env.example",
     "note": "MEASURED, not assumed: server.js calls dotenv with resolve(__dirname, '.env'), and auth-bypass.js reads the same file for FRACTERA_IP_NODOMAIN_MODE. The installer writes THIS name. A service that is asked which file it reads cannot be guessed wrong."
   },
+  "health": {
+    "path": "/health",
+    "expect": 200,
+    "note": "The only door that needs no key — which is exactly what makes it the watchdog's door. Every other door answers a refusal without X-Data-Secret, and a refusal is indistinguishable from a broken service to anything that only reads status codes."
+  },
   "runtime": {
     "stack": "node",
     "node": ">=20",
