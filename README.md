@@ -44,14 +44,16 @@ the whole deployment:
 
 ```
 npm ci
-cp .env.example .env.local    # then fill the values in by hand
+cp .env.example .env          # then fill the values in by hand
 npm run start
 ```
 
 Normally you do none of this: the node installs the service with one command
-(`npm run services:install`), assigns the port and writes `.env.local` itself.
+(`npm run services:install`), assigns the port and writes `.env` itself.
 
-🛑 **`.env.local` is a generated file.** Editing it by hand works until the next install and then
+🛑 **`.env` is a generated file** — and note the name: this service reads plain `.env`, while the
+auth service next to it reads `.env.local`. Both names are stated in each passport, so the installer
+asks rather than assumes. Editing the generated file by hand works until the next install and then
 disappears without a word.
 
 ## Storage

@@ -12,6 +12,11 @@
     "desired": 24682,
     "note": "A wish, not a decision. The node assigns the actual port from the block 24680-24699 and writes it into MICROSERVICES.json. Ask the node, never remember."
   },
+  "env": {
+    "file": ".env",
+    "example": ".env.example",
+    "note": "MEASURED, not assumed: server.js calls dotenv with resolve(__dirname, '.env'), and auth-bypass.js reads the same file for FRACTERA_IP_NODOMAIN_MODE. The installer writes THIS name. A service that is asked which file it reads cannot be guessed wrong."
+  },
   "runtime": {
     "stack": "node",
     "node": ">=20",
