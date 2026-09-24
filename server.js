@@ -434,6 +434,17 @@ app.get('/health', (_req, res) => res.json({ ok: true }))
 // ключа нет вовсе, а дверь настроек стережёт свой SETTINGS_SECRET.
 mountPresentation(app, __dirname)
 
+// 🔒 ИЗ ИНТЕРНЕТА — ТОЛЬКО СТРАНИЦА (узел, шаг 289-1). Когда у службы появляется имя на домене (`data.<зона>`), к ней
+// приходят через туннель Cloudflare — такой запрос несёт заголовок `cf-ray`. Страница-презентация — для людей; двери
+// к данным — для программ ЭТОЙ машины и никогда не открываются наружу, даже с ключом: ключ, утёкший однажды, иначе
+// открыл бы все данные узла из любой точки мира. Запросы с машины (соседние службы по петле) `cf-ray` не несут и
+// идут как раньше.
+const PUBLIC_PATHS = /^\/(?:(?:en|ru)\/?)?$|^\/_next\/|^\/api\/me$|^\/health$/
+app.use((req, res, next) => {
+  if (req.headers['cf-ray'] && !PUBLIC_PATHS.test(req.path)) return res.status(404).json({ error: 'Not found' })
+  next()
+})
+
 // ── Apply auth to everything below ───────────────────────────────────────────
 
 app.use(requireAuth)
