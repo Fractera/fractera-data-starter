@@ -27,36 +27,128 @@
     "node": ">=20",
     "build": null,
     "start": "npm run start",
-    "nativeModules": ["better-sqlite3", "sqlite-vec", "sharp"],
+    "nativeModules": [
+      "better-sqlite3",
+      "sqlite-vec",
+      "sharp"
+    ],
     "note": "No build step: server.js is both source and production. It is in git, there is no obfuscation."
   },
   "storage": {
     "engine": "sqlite",
     "file": "data/app.db",
     "schema": "executed at start, no migrations",
-    "folders": ["data", "storage", "icons"],
+    "folders": [
+      "data",
+      "storage",
+      "icons"
+    ],
     "inGit": false
   },
-  "provides": ["tables", "media", "vectors", "deploy-runs", "panel-settings", "service-routing"],
+  "provides": [
+    "tables",
+    "media",
+    "vectors",
+    "deploy-runs",
+    "panel-settings",
+    "service-routing"
+  ],
   "doors": [
-    { "path": "/health", "method": "GET", "gives": "liveness — the only door that needs no key" },
-    { "path": "/capabilities", "method": "GET", "gives": "what this installation can actually do right now" },
-    { "path": "/db/tables", "method": "GET", "gives": "the list of tables" },
-    { "path": "/db/tables/:table", "method": "GET|POST", "gives": "rows of a table, and row creation" },
-    { "path": "/db/tables/:table/rows/:id", "method": "PATCH", "gives": "row update" },
-    { "path": "/db/migrate", "method": "POST", "gives": "the column ladder: adds what a schema gained" },
-    { "path": "/media", "method": "GET", "gives": "the media list" },
-    { "path": "/media/upload", "method": "POST", "gives": "file upload" },
-    { "path": "/media/:id/file", "method": "GET", "gives": "the file itself" },
-    { "path": "/media/:id/thumb", "method": "GET", "gives": "a thumbnail" },
-    { "path": "/media/generate-icons", "method": "POST", "gives": "a full icon set from one image" },
-    { "path": "/vectors", "method": "POST", "gives": "stores a vector next to a row" },
-    { "path": "/vectors/search", "method": "POST", "gives": "nearest neighbours" },
-    { "path": "/vectors/status", "method": "GET", "gives": "model, dimensions, index mode" },
-    { "path": "/deploy-runs", "method": "GET|POST|PATCH", "gives": "the deployment journal" },
-    { "path": "/panel-settings/:key", "method": "GET|PUT", "gives": "settings a control surface keeps" },
-    { "path": "/platform/openai-key", "method": "GET|POST", "gives": "presence and setting of the embeddings key" },
-    { "path": "/service/<name>/*", "method": "ANY", "gives": "the one-door route to another service of this node, by name" }
+    {
+      "path": "/, /en, /ru",
+      "method": "GET",
+      "gives": "the presentation page — no key"
+    },
+    {
+      "path": "/health",
+      "method": "GET",
+      "gives": "liveness — the only door that needs no key"
+    },
+    {
+      "path": "/capabilities",
+      "method": "GET",
+      "gives": "what this installation can actually do right now"
+    },
+    {
+      "path": "/db/tables",
+      "method": "GET",
+      "gives": "the list of tables"
+    },
+    {
+      "path": "/db/tables/:table",
+      "method": "GET|POST",
+      "gives": "rows of a table, and row creation"
+    },
+    {
+      "path": "/db/tables/:table/rows/:id",
+      "method": "PATCH",
+      "gives": "row update"
+    },
+    {
+      "path": "/db/migrate",
+      "method": "POST",
+      "gives": "the column ladder: adds what a schema gained"
+    },
+    {
+      "path": "/media",
+      "method": "GET",
+      "gives": "the media list"
+    },
+    {
+      "path": "/media/upload",
+      "method": "POST",
+      "gives": "file upload"
+    },
+    {
+      "path": "/media/:id/file",
+      "method": "GET",
+      "gives": "the file itself"
+    },
+    {
+      "path": "/media/:id/thumb",
+      "method": "GET",
+      "gives": "a thumbnail"
+    },
+    {
+      "path": "/media/generate-icons",
+      "method": "POST",
+      "gives": "a full icon set from one image"
+    },
+    {
+      "path": "/vectors",
+      "method": "POST",
+      "gives": "stores a vector next to a row"
+    },
+    {
+      "path": "/vectors/search",
+      "method": "POST",
+      "gives": "nearest neighbours"
+    },
+    {
+      "path": "/vectors/status",
+      "method": "GET",
+      "gives": "model, dimensions, index mode"
+    },
+    {
+      "path": "/deploy-runs",
+      "method": "GET|POST|PATCH",
+      "gives": "the deployment journal"
+    },
+    {
+      "path": "/panel-settings/:key",
+      "method": "GET|PUT",
+      "gives": "settings a control surface keeps"
+    },
+    {
+      "path": "/platform/openai-key",
+      "method": "GET|POST",
+      "gives": "presence and setting of the embeddings key"
+    },
+    {
+      "path": "/service/<name>/*",
+      "method": "ANY",
+      "gives": "the one-door route to another service of this node, by name"
+    }
   ],
   "languages": {
     "count": 0,
@@ -72,5 +164,16 @@
     "movedFrom": "ai-workspace/services/data",
     "movedAt": "2026-09-20",
     "step": "257-2"
+  },
+  "settings": {
+    "door": "/api/settings/design",
+    "key": {
+      "header": "X-Settings-Key",
+      "env": "SETTINGS_SECRET"
+    },
+    "owns": [
+      "DESIGN-CONFIG"
+    ],
+    "note": "The presentation page (/, /en, /ru) takes the node design; the core patches DESIGN-CONFIG through this door. The page reads it on every request — no build."
   }
 }

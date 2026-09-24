@@ -10,6 +10,7 @@ import { resolve, dirname, extname } from 'path'
 import { fileURLToPath } from 'url'
 import { config } from 'dotenv'
 import { execSync } from 'child_process'
+import { mountPresentation } from './presentation.js'
 import { shouldBypassAuth } from './auth-bypass.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -428,6 +429,10 @@ app.use(express.json())
 // ── GET /health — no auth ─────────────────────────────────────────────────────
 
 app.get('/health', (_req, res) => res.json({ ok: true }))
+
+// Страница-презентация и дверь настроек (узел Fractera, 280-10) — до проверки ключа данных: у страницы
+// ключа нет вовсе, а дверь настроек стережёт свой SETTINGS_SECRET.
+mountPresentation(app, __dirname)
 
 // ── Apply auth to everything below ───────────────────────────────────────────
 
