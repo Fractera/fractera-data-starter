@@ -21,8 +21,6 @@ const WORDS = {
 type Lang = keyof typeof WORDS
 const DOORS = ["/health", "/db/tables", "/media", "/vectors/search", "/service/<name>/*"]
 
-export const dynamicParams = false
-
 export function generateStaticParams() {
   return Object.keys(WORDS).map((lang) => ({ lang }))
 }
