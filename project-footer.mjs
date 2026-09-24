@@ -44,7 +44,9 @@ export function renderProjectFooter(groups, lang, fallback = '') {
         .map((g) => `<a class="pf-link" href="${esc(abs(g.href || `/${g.slug}`))}">${esc(g.label)}</a>`)
         .join('')}</nav></div>`
     : ''
-  return `<footer class="pf">${pages}<p class="pf-copy">© ${new Date().getFullYear()}${brand ? ` ${esc(brand)}` : ''}. ${esc(w.rights)}</p></footer>`
+  // Имя ведёт в корень проекта (сайт) — слово владельца 2026-09-24, как и имя в хедере.
+  const name = brand ? ` <a class="pf-link" href="${esc(site ? `${site}/${lang}` : '/')}">${esc(brand)}</a>` : ''
+  return `<footer class="pf">${pages}<p class="pf-copy">© ${new Date().getFullYear()}${name}. ${esc(w.rights)}</p></footer>`
 }
 
 /** Стили футера — на токенах оформления узла (`--background`, `--foreground`, `--border`, `--muted-foreground`, `--primary`). */
