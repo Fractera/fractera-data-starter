@@ -7,8 +7,13 @@ import { spawnSync } from 'node:child_process'
 import { writeFileSync, renameSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { config } from 'dotenv'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
+// 🔒 ОКРУЖЕНИЕ СЛУЖБЫ — ИЗ ЕЁ `.env` В КОРНЕ (285-4). Next читает `.env` из папки приложения (`presentation/`), а
+// установщик узла пишет `.env` в корень службы. ✗ Измерено: без этой строки страница собралась на узле БЕЗ
+// оболочки — `PROJECT_SHELL_URL` на сборке пуст. Заданное снаружи (NEXT_DIST_DIR от установщика) не перезаписывается.
+config({ path: join(ROOT, '.env'), quiet: true })
 const dist = process.env.NEXT_DIST_DIR || '.next'
 const r = spawnSync('npx', ['next', 'build', 'presentation'], {
   cwd: ROOT,
