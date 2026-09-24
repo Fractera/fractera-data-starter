@@ -25,14 +25,15 @@
   "runtime": {
     "stack": "node",
     "node": ">=20",
-    "build": null,
+    "build": "npm run build",
     "start": "npm run start",
     "nativeModules": [
       "better-sqlite3",
       "sqlite-vec",
       "sharp"
     ],
-    "note": "No build step: server.js is both source and production. It is in git, there is no obfuscation."
+    "note": "server.js is the service and its production (Express, in git, no obfuscation). Since 285-4 the presentation page (/, /en, /ru) is a Next app in presentation/, served INSIDE this process — one process, one port. `npm run build` builds it into the folder NEXT_DIST_DIR names (the node alternates .next-a / .next-b while the old build serves) and only then points .presentation-dist at it; the process reads that mark at start. No build — the page answers 503, every data door works.",
+    "distDirEnv": "NEXT_DIST_DIR"
   },
   "storage": {
     "engine": "sqlite",

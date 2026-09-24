@@ -19,3 +19,13 @@ icons/*
 *.log
 .DS_Store
 Thumbs.db
+
+# 285-4: сборки страницы на Next (корень службы, чередуются .next-a / .next-b) и метка текущей
+.next
+.next-a
+.next-b
+.presentation-dist
+.presentation-dist.*.tmp
+presentation/next-env.d.ts
+presentation/tsconfig.tsbuildinfo
+*.tsbuildinfo
