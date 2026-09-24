@@ -12,6 +12,10 @@
 import { readFileSync, writeFileSync, renameSync, mkdirSync, existsSync, unlinkSync } from 'fs'
 import { dirname, join, resolve } from 'path'
 import { timingSafeEqual } from 'crypto'
+// 283-4: хедер и футер проекта — готовые решения узла (ставятся `header-kit:add`/`footer-kit:add --express`,
+// руками не править). Меню, страницы подвала и имя проекта — у двери сайта, раз в минуту.
+import { loadProjectMenu, renderProjectHeader, PROJECT_HEADER_CSS } from './project-header.mjs'
+import { loadProjectFooter, renderProjectFooter, PROJECT_FOOTER_CSS } from './project-footer.mjs'
 
 const WORDS = {
   en: {
@@ -51,8 +55,9 @@ export function mountPresentation(app, serviceDir) {
       .map(([k, v]) => `--${k}: ${v};`)
       .join(' ')
 
-  const page = (lang) => {
+  const page = async (lang) => {
     const w = WORDS[lang] || WORDS.en
+    const [menu, footer] = await Promise.all([loadProjectMenu(lang), loadProjectFooter(lang)])
     const d = readDesign()
     const body = isObj(d.fonts) && isObj(d.fonts.body) ? d.fonts.body : null
     const font = body && safe(body.family) ? `font-family: '${body.family}', system-ui, sans-serif;` : ''
@@ -64,21 +69,23 @@ export function mountPresentation(app, serviceDir) {
     return `<!doctype html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${w.title}</title>${link}
 <style>
-:root{--background:#ffffff;--foreground:#0f172a;--primary:#0f172a;--muted:#f1f5f9;--border:#e2e8f0;--radius:0.625rem;${light}${radius}}
-@media (prefers-color-scheme: dark){:root{--background:#0b1220;--foreground:#e2e8f0;--primary:#e2e8f0;--muted:#1e293b;--border:#334155;${dark}}}
-body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--background);color:var(--foreground);${font}}
+:root{--background:#ffffff;--foreground:#0f172a;--primary:#0f172a;--muted:#f1f5f9;--muted-foreground:#64748b;--border:#e2e8f0;--radius:0.625rem;${light}${radius}}
+@media (prefers-color-scheme: dark){:root{--background:#0b1220;--foreground:#e2e8f0;--primary:#e2e8f0;--muted:#1e293b;--muted-foreground:#94a3b8;--border:#334155;${dark}}}
+body{margin:0;min-height:100vh;display:flex;flex-direction:column;background:var(--background);color:var(--foreground);${font}}
+.stage{flex:1;display:flex;align-items:center;justify-content:center}
 main{max-width:30rem;margin:1.5rem;padding:2rem;border:1px solid var(--border);border-radius:var(--radius);background:var(--muted)}
+${PROJECT_HEADER_CSS}${PROJECT_FOOTER_CSS}
 h1{margin:0 0 .75rem;font-size:1.5rem}p{opacity:.8;line-height:1.5}
 .badge{display:inline-block;padding:.25rem .75rem;border-radius:var(--radius);background:var(--primary);color:var(--background);font-size:.875rem}
 code{font-size:.875rem}
-</style></head><body><main>
+</style></head><body>${renderProjectHeader(menu, lang)}<div class="stage"><main>
 <h1>${w.title}</h1><p>${w.lead}</p><p><span class="badge">${w.alive}</span></p>
 <p><strong>${w.doors}</strong></p><ul>${DOORS.map((x) => `<li><code>${x}</code></li>`).join('')}</ul>
-</main></body></html>`
+</main></div>${renderProjectFooter(footer, lang)}</body></html>`
   }
 
-  app.get('/', (_req, res) => res.type('html').send(page('en')))
-  app.get('/:lang(en|ru)', (req, res) => res.type('html').send(page(req.params.lang)))
+  app.get('/', async (_req, res) => res.type('html').send(await page('en')))
+  app.get('/:lang(en|ru)', async (req, res) => res.type('html').send(await page(req.params.lang)))
 
   const keyOk = (req) => {
     const expected = process.env.SETTINGS_SECRET || ''
