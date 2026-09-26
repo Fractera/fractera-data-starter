@@ -424,7 +424,10 @@ try {
 
 const app = express()
 app.use(cors({ origin: true, credentials: true }))
-app.use(express.json())
+// 308: сигнал CONFIG идёт в страницу (Next) — тело не разбирается здесь. ✗ Иначе Next получал уже прочитанный поток и
+// отвечал 500 «Response body object should not be disturbed or locked» (замерено на узле 2026-09-26).
+const jsonBody = express.json()
+app.use((req, res, next) => (req.path === '/api/settings/changed' ? next() : jsonBody(req, res, next)))
 
 // ── GET /health — no auth ─────────────────────────────────────────────────────
 
