@@ -52,7 +52,7 @@ export function mountPresentation(app, serviceDir) {
   app.get('/', (_req, res) => res.redirect(302, '/en'))
   // 308: сигнал CONFIG «версия сменилась» — маршрут страницы (перерисовка без пересборки); ключ проверяет сама страница.
   app.post('/api/settings/changed', page)
-  app.get(['/:lang(en|ru)', '/_next/*'], page)
+  app.get(['/:lang(en|ru)', '/_next/*', '/fonts/*'], page) // 315: шрифты своего сервера
 
   // ── Кто вошёл — для оболочки страницы (285-4) ───────────────────────────
   // Та же служба входа и тот же cookie проекта, что у двери данных ниже (`requireAuth`); без ключа данных:

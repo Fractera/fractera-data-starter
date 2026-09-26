@@ -442,7 +442,7 @@ mountPresentation(app, __dirname)
 // к данным — для программ ЭТОЙ машины и никогда не открываются наружу, даже с ключом: ключ, утёкший однажды, иначе
 // открыл бы все данные узла из любой точки мира. Запросы с машины (соседние службы по петле) `cf-ray` не несут и
 // идут как раньше.
-const PUBLIC_PATHS = /^\/(?:(?:en|ru)\/?)?$|^\/_next\/|^\/api\/me$|^\/health$/
+const PUBLIC_PATHS = /^\/(?:(?:en|ru)\/?)?$|^\/_next\/|^\/fonts\/|^\/api\/me$|^\/health$/
 app.use((req, res, next) => {
   if (req.headers['cf-ray'] && !PUBLIC_PATHS.test(req.path)) return res.status(404).json({ error: 'Not found' })
   next()
