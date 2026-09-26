@@ -29,3 +29,6 @@ Thumbs.db
 presentation/next-env.d.ts
 presentation/tsconfig.tsbuildinfo
 *.tsbuildinfo
+
+# 315: font files copied from @fontsource packages before each build (scripts/local-fonts.mjs)
+presentation/public/fonts/
