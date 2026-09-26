@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
+import { HeroCentered } from "@/components/hero-centered"
 
 // СТРАНИЦА-ПРЕЗЕНТАЦИЯ СЛУЖБЫ ДАННЫХ (280-10 → 285-4 на Next). Служба машинная (JSON для программ), поэтому
 // страница самая минимальная: что это, какие двери, жива ли. Слова — прежние, из HTML-страницы `presentation.js`.
@@ -9,12 +10,24 @@ const WORDS = {
     lead: "The single door to the data of this node: tables, media and vectors. Programs talk to it with a key; this page only presents it.",
     doors: "Doors",
     alive: "Working",
+    pill: "Agentic engineering infrastructure",
+    steps: [
+      { title: "One door", text: "Tables, media and vectors behind a single address" },
+      { title: "By key", text: "Programs talk to it with the key of the node" },
+      { title: "Between services", text: "Services reach each other through one route" },
+    ],
   },
   ru: {
     title: "Служба данных",
     lead: "Единственная дверь к данным этого узла: таблицы, медиа и векторы. Программы говорят с ней по ключу; эта страница только её представляет.",
     doors: "Двери",
     alive: "Работает",
+    pill: "Инфраструктура агентной инженерии",
+    steps: [
+      { title: "Одна дверь", text: "Таблицы, медиа и векторы за одним адресом" },
+      { title: "По ключу", text: "Программы говорят с ней ключом узла" },
+      { title: "Между службами", text: "Службы зовут друг друга одним маршрутом" },
+    ],
   },
 } as const
 
@@ -35,10 +48,10 @@ export default async function DataPresentation({ params }: { params: Promise<{ l
   if (!(lang in WORDS)) notFound()
   const w = WORDS[lang as Lang]
   return (
-    <main className="flex flex-1 items-center justify-center bg-background p-6 text-foreground">
+    <main className="flex flex-1 flex-col items-center gap-6 bg-background px-6 pb-12 text-foreground">
+      {/* Первый экран по центру (304-4); ниже — карточка дверей, как была. */}
+      <HeroCentered pill={w.pill} title={w.title} description={w.lead} steps={w.steps} />
       <div className="flex w-full max-w-md flex-col gap-6 rounded-[var(--radius)] border border-border bg-card p-8 text-card-foreground">
-        <h1 className="text-2xl font-semibold">{w.title}</h1>
-        <p className="text-muted-foreground">{w.lead}</p>
         <p>
           <span className="inline-block rounded-[var(--radius)] bg-primary px-3 py-1 text-sm text-primary-foreground">{w.alive}</span>
         </p>
