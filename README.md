@@ -21,6 +21,7 @@ data can be read or written, so there is exactly one place to protect, replace o
 | `POST /media/generate-icons` | a full icon set from one image |
 | `POST /vectors` · `POST /vectors/search` · `GET /vectors/status` | the vector half |
 | `GET|POST|PATCH /deploy-runs` | the deployment journal |
+| `GET|POST /a2a-log` | the agent-to-agent conversation log (newest first; `after`, `before`, `element`, `pair`, `task`; the last 10 000 kept, keys stripped, bodies ≤ 8 KB) |
 | `GET|PUT /panel-settings/:key` | settings a control surface keeps |
 | `ANY /service/<name>/*` | the one-door route to another service of this node |
 

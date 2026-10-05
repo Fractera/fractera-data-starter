@@ -51,6 +51,7 @@
     "media",
     "vectors",
     "deploy-runs",
+    "a2a-log",
     "panel-settings",
     "service-routing"
   ],
@@ -134,6 +135,11 @@
       "path": "/deploy-runs",
       "method": "GET|POST|PATCH",
       "gives": "the deployment journal"
+    },
+    {
+      "path": "/a2a-log",
+      "method": "GET|POST",
+      "gives": "the agent-to-agent conversation log: newest first, after/before/element/pair/task, last 10 000 kept"
     },
     {
       "path": "/panel-settings/:key",

@@ -1276,6 +1276,103 @@ app.get('/deploy-runs/:id', (req, res) => {
   res.json({ run: row })
 })
 
+// ── A2A CONVERSATION LOG ──────────────────────────────────────────────────────
+//
+// Every agent-to-agent call that reaches an element's A2A endpoint leaves a row here: who called whom, the method and
+// skill, what was asked, what came back, the outcome and how long it took (node step 408). The element hands the record
+// to the core, the core writes it here and shows it as a read-only feed. Refusals are rows too — "the caller never got
+// through" is exactly what the feed has to show.
+//
+// A dedicated door, not `/db/tables`: the feed needs the newest first, rows newer than the last one seen, and a filter by
+// element — the generic door has no order and no column filter.
+//
+// Owner 2026-10-05: «Последние 10 000» — every insert trims the oldest beyond 10 000. Bodies are capped at 8 KB each and
+// keys never enter the table: fields named like a secret are removed before the row is written.
+appDb.exec(`
+  CREATE TABLE IF NOT EXISTS a2a_log (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    at            TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+    from_element  TEXT NOT NULL DEFAULT 'unknown',
+    to_element    TEXT NOT NULL,
+    method        TEXT,
+    skill         TEXT,
+    task_id       TEXT,
+    context_id    TEXT,
+    state         TEXT,
+    http_status   INTEGER,
+    reason        TEXT,
+    duration_ms   INTEGER,
+    request       TEXT,
+    response      TEXT,
+    truncated     INTEGER NOT NULL DEFAULT 0
+  );
+  CREATE INDEX IF NOT EXISTS a2a_log_from_idx ON a2a_log (from_element, id);
+  CREATE INDEX IF NOT EXISTS a2a_log_to_idx ON a2a_log (to_element, id);
+`)
+
+const A2A_LOG_KEEP = 10000
+const A2A_BODY_MAX = 8 * 1024
+const A2A_SECRET_KEY = /secret|token|password|api[-_]?key|node[-_]?key|authorization/i
+
+/** Drop every field whose name reads like a secret, at any depth. */
+function withoutSecrets(value, depth = 0) {
+  if (depth > 12 || value === null || typeof value !== 'object') return value
+  if (Array.isArray(value)) return value.map((v) => withoutSecrets(v, depth + 1))
+  const out = {}
+  for (const [k, v] of Object.entries(value)) if (!A2A_SECRET_KEY.test(k)) out[k] = withoutSecrets(v, depth + 1)
+  return out
+}
+
+/** JSON text of a body, secrets removed, capped at 8 KB. */
+function a2aBody(value) {
+  if (value === undefined || value === null) return { text: null, cut: false }
+  const text = typeof value === 'string' ? value : JSON.stringify(withoutSecrets(value))
+  return text.length > A2A_BODY_MAX ? { text: text.slice(0, A2A_BODY_MAX), cut: true } : { text, cut: false }
+}
+
+const a2aShort = (v, n = 128) => (typeof v === 'string' && v.trim() ? v.trim().slice(0, n) : null)
+
+app.post('/a2a-log', (req, res) => {
+  const b = req.body ?? {}
+  const to = a2aShort(b.to)
+  if (!to) return res.status(400).json({ error: 'to (the receiving element) is required' })
+  const request = a2aBody(b.request)
+  const response = a2aBody(b.response)
+  const info = appDb.prepare(
+    `INSERT INTO a2a_log (from_element, to_element, method, skill, task_id, context_id, state, http_status, reason,
+                          duration_ms, request, response, truncated)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  ).run(
+    a2aShort(b.from) ?? 'unknown', to, a2aShort(b.method), a2aShort(b.skill), a2aShort(b.taskId), a2aShort(b.contextId),
+    a2aShort(b.state), Number.isInteger(b.httpStatus) ? b.httpStatus : null, a2aShort(b.reason),
+    Number.isFinite(b.durationMs) ? Math.round(b.durationMs) : null, request.text, response.text,
+    request.cut || response.cut ? 1 : 0,
+  )
+  const id = Number(info.lastInsertRowid)
+  appDb.prepare('DELETE FROM a2a_log WHERE id <= ?').run(id - A2A_LOG_KEEP)
+  res.json({ ok: true, id })
+})
+
+// Newest first. `after` = only rows newer than that id (the feed polls with it); `before` = an older page. `element` =
+// rows where it is either side; `pair=a,b` = rows between those two; `task` = one task.
+app.get('/a2a-log', (req, res) => {
+  const limit = Math.min(Math.max(Number(req.query.limit) || 100, 1), 200)
+  const where = []
+  const args = []
+  if (Number(req.query.after) > 0) { where.push('id > ?'); args.push(Number(req.query.after)) }
+  if (Number(req.query.before) > 0) { where.push('id < ?'); args.push(Number(req.query.before)) }
+  const element = a2aShort(req.query.element)
+  if (element) { where.push('(from_element = ? OR to_element = ?)'); args.push(element, element) }
+  const [a, b] = String(req.query.pair ?? '').split(',').map((s) => s.trim())
+  if (a && b) { where.push('((from_element = ? AND to_element = ?) OR (from_element = ? AND to_element = ?))'); args.push(a, b, b, a) }
+  const task = a2aShort(req.query.task)
+  if (task) { where.push('task_id = ?'); args.push(task) }
+  const rows = appDb.prepare(
+    `SELECT * FROM a2a_log ${where.length ? 'WHERE ' + where.join(' AND ') : ''} ORDER BY id DESC LIMIT ?`
+  ).all(...args, limit)
+  res.json({ rows, total: appDb.prepare('SELECT COUNT(*) AS n FROM a2a_log').get().n })
+})
+
 // ── PANEL SETTINGS ────────────────────────────────────────────────────────────
 //
 // Settings that belong to the SERVER rather than to the guest application — today the automatic
