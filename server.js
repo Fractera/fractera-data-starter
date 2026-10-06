@@ -1310,7 +1310,18 @@ appDb.exec(`
   CREATE INDEX IF NOT EXISTS a2a_log_to_idx ON a2a_log (to_element, id);
 `)
 
-const A2A_LOG_KEEP = 10000
+// Conversations an order summary points at are kept (node step 412-5). Owner 2026-10-06, choosing between «the link is
+// temporary» and «conversations with a summary are not pushed out»: «б» — the second. The element that saved the summary pins
+// its conversation; trimming skips pinned conversations. `A2A_LOG_KEEP` in the environment exists for the probe only.
+appDb.exec(`
+  CREATE TABLE IF NOT EXISTS a2a_pinned (
+    context_id  TEXT PRIMARY KEY,
+    at          TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+    by_element  TEXT
+  );
+`)
+
+const A2A_LOG_KEEP = Number(process.env.A2A_LOG_KEEP) > 0 ? Number(process.env.A2A_LOG_KEEP) : 10000
 const A2A_BODY_MAX = 8 * 1024
 const A2A_SECRET_KEY = /secret|token|password|api[-_]?key|node[-_]?key|authorization/i
 
@@ -1349,12 +1360,24 @@ app.post('/a2a-log', (req, res) => {
     request.cut || response.cut ? 1 : 0,
   )
   const id = Number(info.lastInsertRowid)
-  appDb.prepare('DELETE FROM a2a_log WHERE id <= ?').run(id - A2A_LOG_KEEP)
+  appDb.prepare(
+    'DELETE FROM a2a_log WHERE id <= ? AND (context_id IS NULL OR context_id NOT IN (SELECT context_id FROM a2a_pinned))'
+  ).run(id - A2A_LOG_KEEP)
   res.json({ ok: true, id })
 })
 
+// Pin one conversation: its rows survive trimming (412-5). Idempotent.
+app.post('/a2a-log/pin', (req, res) => {
+  const b = req.body ?? {}
+  const contextId = a2aShort(b.contextId)
+  if (!contextId) return res.status(400).json({ error: 'contextId is required' })
+  appDb.prepare('INSERT OR IGNORE INTO a2a_pinned (context_id, by_element) VALUES (?, ?)').run(contextId, a2aShort(b.by))
+  const rows = appDb.prepare('SELECT COUNT(*) AS n FROM a2a_log WHERE context_id = ?').get(contextId).n
+  res.json({ ok: true, contextId, rows })
+})
+
 // Newest first. `after` = only rows newer than that id (the feed polls with it); `before` = an older page. `element` =
-// rows where it is either side; `pair=a,b` = rows between those two; `task` = one task.
+// rows where it is either side; `pair=a,b` = rows between those two; `task` = one task; `context` = one conversation.
 app.get('/a2a-log', (req, res) => {
   const limit = Math.min(Math.max(Number(req.query.limit) || 100, 1), 200)
   const where = []
@@ -1367,6 +1390,9 @@ app.get('/a2a-log', (req, res) => {
   if (a && b) { where.push('((from_element = ? AND to_element = ?) OR (from_element = ? AND to_element = ?))'); args.push(a, b, b, a) }
   const task = a2aShort(req.query.task)
   if (task) { where.push('task_id = ?'); args.push(task) }
+  // 412-6: `context` = one conversation (an order summary links to it).
+  const context = a2aShort(req.query.context)
+  if (context) { where.push('context_id = ?'); args.push(context) }
   const rows = appDb.prepare(
     `SELECT * FROM a2a_log ${where.length ? 'WHERE ' + where.join(' AND ') : ''} ORDER BY id DESC LIMIT ?`
   ).all(...args, limit)
