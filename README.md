@@ -8,6 +8,23 @@ split it on 2026-10-21 into native elements: **data** (this one, the database), 
 (search by meaning); the knowledge graph is the **graph** element. The former addresses `/media/*` and `/vectors/*` still answer
 here: the request is passed to the storage or vectors element as it is, and the answer comes back unchanged.
 
+## In the Fractera project
+
+The node's database: tables and journals of every element. It is the one element that opens the database file; every other element reads and writes through its doors, and files and vectors reach the storage and vectors elements through it.
+
+You can change it. The code is open under the MIT license and the copy on your node is yours. The node installs this element from
+this repository by the tag written in `WEB4-ITEMS-REGISTRY/web4-items.json` of the core; the core does not let you delete a built-in
+element or move its address.
+
+To change it, open it in the core (left menu, Native items, Database), go to Build and tell its agent in the terminal what you need.
+The agent edits the element folder `WEB4-ITEMS/core/data` and commits. Its backup is set up in Backup of the same element.
+
+The change goes live when you press Deploy in Build, Deployments: the element is rebuilt beside the running one and switched over in
+seconds. Other elements call its doors by address, request and answer, so a change to a door breaks every element that uses it;
+that is a decision for the node owner, while a change inside the element is ordinary work. To keep your version when the node is
+reinstalled, save the element to your own GitHub repository in Build, GitHub. A newer Fractera version arrives through Update, which
+merges it with your commits, and the element's agent resolves a conflict.
+
 ## Doors
 
 Every door but `/health` needs the node data key (`X-Data-Secret`, the installer writes the same `DATA_SECRET` to every element)
