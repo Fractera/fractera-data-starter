@@ -1,0 +1,87 @@
+{
+  "title": "Fractera Data — the database of your node",
+  "description": "The database every element of the node uses: tables, the deploy journal and the log of agent conversations. Programs reach it with the node key.",
+  "keywords": "",
+  "blocks": [
+    {
+      "kind": "block-hero-centered",
+      "pill": "Agentic engineering infrastructure",
+      "title": "The database of your node",
+      "description": "Every element of the node keeps its tables here. Programs talk to it with the node key; this page only presents it.",
+      "bid": "nc75s"
+    },
+    {
+      "kind": "text-list",
+      "items": [
+        "One door to the tables of every element",
+        "Only programs of this machine get in, and only with the node key",
+        "Files and vectors live in their own elements next to it"
+      ],
+      "bid": "ooqb5"
+    },
+    {
+      "kind": "text-small",
+      "text": "SQLite · /db · /deploy-runs · /a2a-log · /service/<name>",
+      "bid": "yehua"
+    },
+    {
+      "kind": "block-section-head",
+      "id": "keeps",
+      "badge": "Doors",
+      "title": "What it keeps",
+      "bid": "jdgwb"
+    },
+    {
+      "kind": "text-h3",
+      "text": "Tables",
+      "bid": "kq5rd"
+    },
+    {
+      "kind": "text-p",
+      "text": "Elements read and write rows through /db/tables. Only the machine key may change the schema.",
+      "bid": "zh7bp"
+    },
+    {
+      "kind": "text-h3",
+      "text": "Deploy journal",
+      "bid": "oqtoz"
+    },
+    {
+      "kind": "text-p",
+      "text": "Every deploy of an element leaves a record: when it ran, how long it took and how it ended.",
+      "bid": "satod"
+    },
+    {
+      "kind": "text-h3",
+      "text": "Agent conversations",
+      "bid": "piu8f"
+    },
+    {
+      "kind": "text-p",
+      "text": "Agents of the node write down what they asked each other and what they answered. The last 10,000 entries are kept.",
+      "bid": "hgojn"
+    },
+    {
+      "kind": "text-h3",
+      "text": "One route between services",
+      "bid": "m04ve"
+    },
+    {
+      "kind": "text-p",
+      "text": "A service reaches another service of this machine by name, through /service/<name>, with the same key.",
+      "bid": "gsowc"
+    },
+    {
+      "kind": "block-section-head",
+      "id": "moved",
+      "badge": "Next to it",
+      "title": "Where files and vectors went",
+      "bid": "ex4fn"
+    },
+    {
+      "kind": "text-p",
+      "text": "Files and images moved to the storage element, vectors to the vectors element. The old addresses /media and /vectors still work here: the request goes to the new element and its answer comes back unchanged.",
+      "bid": "yk96g"
+    }
+  ]
+}

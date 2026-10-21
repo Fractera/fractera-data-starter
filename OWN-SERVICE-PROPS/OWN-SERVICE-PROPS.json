@@ -1,0 +1,25 @@
+{
+  "id": "data",
+  "name": "Fractera Data",
+  "shortDescription": "The database of the node: tables any element keeps through one door, the deploy journal, the agent-to-agent log, the panel settings and one route to the services of this machine.",
+  "longDescription": "The database layer of the node. Elements never open a database file: they read and write tables through /db/tables (rows, one-row edits, inserts) with the node data key, and only the machine key may change the schema through /db/migrate. Next to the tables it keeps the deploy journal (/deploy-runs), the agent-to-agent conversation log (/a2a-log), the settings a control surface stores (/panel-settings), the one door for the OpenAI key (/platform/openai-key) and one route to the loopback services of the machine (/service/<name>/*). Media and vectors moved to their own elements (storage and vectors); their former addresses here still answer by passing the request on.",
+  "accepts": "The node data key (X-Data-Secret) or a privileged session; JSON bodies.",
+  "returns": "JSON: tables, rows, journal entries; the answers of the storage and vector elements unchanged on the former addresses /media and /vectors.",
+  "designSkill": "impeccable",
+  "isFracteraArchitecture": true,
+  "framework": "next",
+  "elementType": "native",
+  "visibility": "node",
+  "calls": [
+    "auth",
+    "config",
+    "design",
+    "storage",
+    "vectors"
+  ],
+  "messengers": {
+    "h2a": true,
+    "h2h": false,
+    "a2a": false
+  }
+}

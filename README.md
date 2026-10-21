@@ -1,76 +1,79 @@
-# Fractera Data — the single door to the data
+# fractera-data — the database of a Fractera node
 
-A replaceable microservice. Everything stored by a Fractera node — rows, files, vectors — is reached
-through this one service. The node never opens the database file itself: it knows one address and one
-key.
+A native element of the node, built on the Fractera native element template. It is the one element that opens the node's
+database file; every other element reads and writes tables through its doors.
 
-**One door, not many.** The value is not the SQLite file; it is that there is exactly one place where
-data can be read or written, so there is exactly one place to protect, replace or audit.
+Until step 550 this element was the whole data layer (an Express server): tables, media and vectors in one process. The owner
+split it on 2026-10-21 into native elements: **data** (this one, the database), **storage** (files and images) and **vectors**
+(search by meaning); the knowledge graph is the **graph** element. The former addresses `/media/*` and `/vectors/*` still answer
+here: the request is passed to the storage or vectors element as it is, and the answer comes back unchanged.
 
-## What it gives
+## Doors
 
-| Door | Answers |
-|---|---|
-| `GET /health` | liveness — **the only door that needs no key** |
-| `GET /capabilities` | what this installation can actually do right now |
-| `GET /db/tables` · `GET|POST /db/tables/:table` | tables and their rows |
-| `PATCH /db/tables/:table/rows/:id` | row update |
-| `POST /db/migrate` | the column ladder: adds what a schema gained |
-| `GET /media` · `POST /media/upload` | the media list and upload |
-| `GET /media/:id/file` · `/thumb` | the file and its thumbnail |
-| `POST /media/generate-icons` | a full icon set from one image |
-| `POST /vectors` · `POST /vectors/search` · `GET /vectors/status` | the vector half |
-| `GET|POST|PATCH /deploy-runs` | the deployment journal |
-| `GET|POST /a2a-log` | the agent-to-agent conversation log (newest first; `after`, `before`, `element`, `pair`, `task`; the last 10 000 kept, keys stripped, bodies ≤ 8 KB) |
-| `GET|PUT /panel-settings/:key` | settings a control surface keeps |
-| `ANY /service/<name>/*` | the one-door route to another service of this node |
+Every door but `/health` needs the node data key (`X-Data-Secret`, the installer writes the same `DATA_SECRET` to every element)
+or a privileged session (architect, admin, agent) checked by the node's auth element. A request that came through the Cloudflare
+tunnel (`cf-ray` header) gets 404 on every data door, with a key or without: data never leaves this machine.
 
-The full passport is `OWN-SERVICE-PROPS.json` — written by the author of this service, read and never
-edited by whoever installs it.
+| Door | Method | Gives |
+|---|---|---|
+| `/health` | GET | `{ ok: true }`, no key — the watcher's door |
+| `/capabilities` | GET | what this installation can do; the routes are listed from the router itself |
+| `/db/tables` | GET | the list of tables |
+| `/db/tables/:table` | GET, POST | rows (`search`, `limit` ≤ 1000, `offset`; secret columns such as `password` never leave), insert a row |
+| `/db/tables/:table` | DELETE | drop the table — machine key only |
+| `/db/tables/:table/rows/:id` | PATCH | edit one row by `id` |
+| `/db/migrate` | POST | `{ sql, params }` — DDL, SELECT, writes; machine key only, a session never |
+| `/deploy-runs`, `/deploy-runs/:id` | GET, POST, PATCH | the deploy journal |
+| `/a2a-log`, `/a2a-log/pin` | GET, POST | the agent-to-agent conversation log (last 10 000 kept, secret-named fields stripped) |
+| `/panel-settings/:key` | GET, PUT | JSON values a control surface keeps |
+| `/platform/openai-key` | GET, POST | whether each consumer has the OpenAI key; write it to all of them |
+| `/service/<name>/*` | any | one route to the loopback services of the machine (rag, geo, channels, ai-browser, memory, panel) |
+| `/media/*` | any | passed to the storage element (`STORAGE_URL`) |
+| `/vectors/*` | any | passed to the vectors element (`VECTORS_URL`) |
 
-## The key
+Example — read ten rows of a table from another element:
 
-Every door but `/health` requires the header `X-Data-Secret`. The installer generates that key and
-writes it to both ends; this service never invents one. Without the header the answer is a refusal,
-not an empty result — a distinction worth keeping, because an empty result reads as "there is no
-data" and stops the search.
-
-🛑 **`DATA_BIND` defaults to `127.0.0.1` on purpose.** Setting it to `0.0.0.0` exposes the data layer
-to the network. That has to be someone's decision, never a default.
-
-## No build step
-
-`server.js` is source and production at once. It is in git, unobfuscated, ~1600 lines. Starting it is
-the whole deployment:
-
-```
-npm ci
-cp .env.example .env          # then fill the values in by hand
-npm run start
+```js
+const r = await fetch(`${process.env.REMOTE_DATA_URL}/db/tables/products?limit=10`, {
+  headers: { 'X-Data-Secret': process.env.DATA_SECRET },
+})
+const { columns, rows, total } = await r.json()
 ```
 
-Normally you do none of this: the node installs the service with one command
-(`npm run services:install`), assigns the port and writes `.env` itself.
+New tables are declared by the element that owns them (`CREATE TABLE IF NOT EXISTS` through `/db/migrate` at its start);
+this element runs them and keeps the rows. There are no migrations.
 
-🛑 **`.env` is a generated file** — and note the name: this service reads plain `.env`, while the
-auth service next to it reads `.env.local`. Both names are stated in each passport, so the installer
-asks rather than assumes. Editing the generated file by hand works until the next install and then
-disappears without a word.
+## Where things live
 
-## Storage
+- `lib/data-store/` — the doors. The handlers of the former `server.js` moved here verbatim; `express-shim.mjs` gives them the
+  Express shape (`app.get`, `req.params`, `res.json`) over Next route handlers, `app.mjs` assembles them in the former order.
+- `app/<door>/[[...path]]/route.ts` — one route file per root segment, each hands the request to `lib/data-store/app.mjs`.
+- `proxy.ts` — the data doors pass first (`DATA_DOOR_ROOTS`), before the template's language router and `/api` gate.
+- The database file — `APP_DB_PATH` relative to the element folder (`./data/data.db`), never in git.
+- The home page — `app/[lang]/(publicLayer)/_data/en.json`, `ru.json`.
 
-SQLite, one file, `data/app.db`. The schema is executed at start — no migrations. `data/`, `storage/`
-and `icons/` hold the person's own files and never enter git; only their `.gitkeep` does.
+## Environment
 
-`better-sqlite3`, `sqlite-vec` and `sharp` are native modules. A machine without a build toolchain
-loses the half that needs them and says so, rather than failing at startup.
+The node writes `.env.local` from `.env.example`: `DATA_SECRET` (shared), `APP_DB_PATH`, `STORAGE_URL` and `VECTORS_URL` (the
+neighbours, empty when not installed — the former address then answers 503 naming the missing element), `AUTH_SERVICE_URL`,
+`LIGHTRAG_API_KEY` (foreign, for `/service/rag/*`).
 
-## Where it came from
+## Extending
 
-Moved out of `ai-workspace/services/data` on 2026-09-20 (step 257-2), unchanged: same `server.js`,
-same dependencies. What was added at the move: this README, the passport, a complete `.env.example`,
-and the empty `architect-pages/` folder.
+- A new door: add the handler to a module in `lib/data-store/`, register it in `app.mjs`, and if it opens a new root segment —
+  a route file `app/<segment>/[[...path]]/route.ts`, the segment in `DATA_DOOR_ROOTS` of `proxy.ts` and a line in
+  `scripts/check-routes.mjs`. Changing a door is the owner's decision: every element of the node calls these addresses.
+- The lock (`lib/data-store/auth.mjs`) is shared word for word with storage and vectors; change it in all three at once.
 
-🪦 The old `.env.example` listed three variables while the code reads twenty-three. An incomplete
-list of questions is worse than none — the installer fills what it is asked about and leaves the rest
-at defaults nobody chose.
+## What it does not do
+
+It does not keep files (storage) or vectors (vectors element) any more. The vector tables of the former store stay in
+`data.db` untouched until the owner decides to remove them; the vectors element works on its own copy.
+
+## Proven by
+
+Step 550: the same requests to the former Express service and to this element return the same status and shape
+(`/code/scripts/agent-tokens/door-parity.mjs`), and the consumers of the node (deploy journal, A2A log, media on pages) work
+after the switch.
+
+License: MIT.
