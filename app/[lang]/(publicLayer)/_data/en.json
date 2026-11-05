@@ -1,20 +1,20 @@
 {
   "title": "Fractera Data — the database of your node",
-  "description": "The database every element of the node uses: tables, the deploy journal and the log of agent conversations. Programs reach it with the node key.",
+  "description": "The database every element of the node uses: each element its own tables in its own file, and the node's deploy journal and log of agent conversations. An element reaches only its own tables with its own key; the core and the native elements use the node's data key.",
   "keywords": "",
   "blocks": [
     {
       "kind": "block-hero-centered",
       "pill": "Agentic engineering infrastructure",
       "title": "The database of your node",
-      "description": "Every element of the node keeps its tables here. Programs talk to it with the node key; this page only presents it.",
+      "description": "Every element of the node keeps its tables here, each in its own database file opened by its own key; the node's data key opens them all. This page only presents it.",
       "bid": "nc75s"
     },
     {
       "kind": "text-list",
       "items": [
-        "One door to the tables of every element",
-        "Only programs of this machine get in, and only with the node key",
+        "One door, and each element sees only its own tables",
+        "Only programs of this machine get in: an element with its own key, the core with the node's data key",
         "Files and vectors live in their own elements next to it"
       ],
       "bid": "ooqb5"
