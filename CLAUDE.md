@@ -165,6 +165,13 @@ You are one of the four memory elements (data, storage, vectors, graph). The cor
 server checks `data/cron.json` once a minute (`lib/cron/runner.ts`) — the only timer you have, ordered by the owner of the node for
 backup and nothing else. How to build a copy and put it on the schedule — skill `backup-schedule`.
 
+### Whose tables — each element its own database (node step 654-1)
+
+A call with an element's own key (`X-Element-Key`, `lib/data-store/element-key.mjs`) works on `data/elements/<id>.db`; the node's key
+works on the node's `data.db`, and with `?space=<id>` on an element's. An element's SQL never leaves its file (`ATTACH` and the like are
+refused); tables an element wrote into the node's file before 654 move to it only by `POST /db/claim`, at the architect's word. README
+«Whose tables».
+
 ## 12. Evolution
 
 - Sections 1–10 and these rules are sealed: they change only with a new release of the template, and `npm run check:instruction` (part
