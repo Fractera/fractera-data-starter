@@ -1,87 +1,225 @@
 {
   "title": "Fractera Data — the database of your node",
-  "description": "The database every element of the node uses: each element its own tables in its own file, and the node's deploy journal and log of agent conversations. An element reaches only its own tables with its own key; the core and the native elements use the node's data key.",
+  "description": "The database every element of the node uses: each element its own tables in its own file, the deploy journal and the log of agent conversations, on your own computer.",
   "keywords": "",
   "blocks": [
     {
-      "kind": "block-hero-centered",
-      "pill": "Agentic engineering infrastructure",
-      "title": "The database of your node",
-      "description": "Every element of the node keeps its tables here, each in its own database file opened by its own key; the node's data key opens them all. This page only presents it.",
-      "bid": "nc75s"
+      "kind": "widget-static-data-landing",
+      "bid": "dw001"
     },
     {
-      "kind": "text-list",
-      "items": [
-        "One door, and each element sees only its own tables",
-        "Only programs of this machine get in: an element with its own key, the core with the node's data key",
-        "Files and vectors live in their own elements next to it"
-      ],
-      "bid": "ooqb5"
+      "kind": "block-hero-centered",
+      "pill": "OpenSource Web4 agent & app starter kit",
+      "title": "The database of your node",
+      "description": "Every element keeps its tables here, each in its own database file opened by its own key. The deploy journal and the log of agent conversations live here too, on your own computer.",
+      "cta": {
+        "label": "Connect your element",
+        "href": "#connect"
+      },
+      "secondary": {
+        "label": "Under the hood",
+        "href": "#hood"
+      },
+      "bid": "dh001"
+    },
+    {
+      "kind": "block-section-head",
+      "id": "route",
+      "title": "How a row goes",
+      "bid": "da000"
+    },
+    {
+      "kind": "text-h4",
+      "text": "An element sends a row",
+      "bid": "da001"
+    },
+    {
+      "kind": "text-p",
+      "text": "It reads and writes its tables through /db with its own key, which the installer put into its environment.",
+      "bid": "da002"
+    },
+    {
+      "kind": "text-h4",
+      "text": "Its own file keeps it",
+      "bid": "da003"
+    },
+    {
+      "kind": "text-p",
+      "text": "The element's tables sit in their own database file, data/elements/<id>.db, next to the node's file.",
+      "bid": "da004"
+    },
+    {
+      "kind": "text-h4",
+      "text": "The node sees every file",
+      "bid": "da005"
+    },
+    {
+      "kind": "text-p",
+      "text": "The core, the native elements and the main agent open any element's file with the node's data key.",
+      "bid": "da006"
+    },
+    {
+      "kind": "text-h4",
+      "text": "The journals stay beside it",
+      "bid": "da007"
+    },
+    {
+      "kind": "text-p",
+      "text": "Every deploy leaves a record, and the agents keep their conversations here, the last 10 000 of them.",
+      "bid": "da008"
     },
     {
       "kind": "text-small",
-      "text": "SQLite · /db · /deploy-runs · /a2a-log · /service/<name>",
-      "bid": "yehua"
+      "text": "Through the Cloudflare tunnel every door answers 404, with a key or without.",
+      "bid": "da009"
     },
     {
       "kind": "block-section-head",
-      "id": "keeps",
-      "badge": "Doors",
-      "title": "What it keeps",
-      "bid": "jdgwb"
+      "id": "solves",
+      "title": "What changes for you",
+      "bid": "db000"
     },
     {
-      "kind": "text-h3",
-      "text": "Tables",
-      "bid": "kq5rd"
-    },
-    {
-      "kind": "text-p",
-      "text": "Elements read and write rows through /db/tables. Only the machine key may change the schema.",
-      "bid": "zh7bp"
-    },
-    {
-      "kind": "text-h3",
-      "text": "Deploy journal",
-      "bid": "oqtoz"
-    },
-    {
-      "kind": "text-p",
-      "text": "Every deploy of an element leaves a record: when it ran, how long it took and how it ended.",
-      "bid": "satod"
-    },
-    {
-      "kind": "text-h3",
-      "text": "Agent conversations",
-      "bid": "piu8f"
-    },
-    {
-      "kind": "text-p",
-      "text": "Agents of the node write down what they asked each other and what they answered. The last 10,000 entries are kept.",
-      "bid": "hgojn"
-    },
-    {
-      "kind": "text-h3",
-      "text": "One route between services",
-      "bid": "m04ve"
-    },
-    {
-      "kind": "text-p",
-      "text": "A service reaches another service of this machine by name, through /service/<name>, with the same key.",
-      "bid": "gsowc"
+      "kind": "text-table",
+      "head": [
+        "Without it",
+        "With the database element"
+      ],
+      "rows": [
+        [
+          "Every element would keep its data its own way",
+          "Every element keeps its tables behind one door"
+        ],
+        [
+          "Two elements could write into one table by accident",
+          "Each element has its own database file, and a neighbour's table does not exist for it"
+        ],
+        [
+          "A failed deploy leaves no trace",
+          "Every deploy leaves a record: when it ran, how long it took, how it ended"
+        ],
+        [
+          "Your data sits on someone else's server",
+          "It stays on your computer, inside your node"
+        ]
+      ],
+      "bid": "db001"
     },
     {
       "kind": "block-section-head",
-      "id": "moved",
-      "badge": "Next to it",
-      "title": "Where files and vectors went",
-      "bid": "ex4fn"
+      "id": "spaces",
+      "title": "Whose table it is",
+      "bid": "dc000"
+    },
+    {
+      "kind": "block-access-map",
+      "outer": {
+        "title": "The main agent of the node",
+        "text": "Opens every element's database file and sees whose each table is."
+      },
+      "spaces": [
+        {
+          "title": "Mom's element",
+          "text": "Only its own: her tables and her rows."
+        },
+        {
+          "title": "Son's element",
+          "text": "Only its own: his lessons and his answers."
+        },
+        {
+          "title": "Your site",
+          "text": "Only its own: the tables of its pages."
+        }
+      ],
+      "between": "Each element opens the database with its own key, and a neighbour's table does not exist for it.",
+      "bid": "dc001"
     },
     {
       "kind": "text-p",
-      "text": "Files and images moved to the storage element, vectors to the vectors element. The old addresses /media and /vectors still work here: the request goes to the new element and its answer comes back unchanged.",
-      "bid": "yk96g"
+      "text": "A call with an element's key works on that element's file. SQL that reaches for another file, such as ATTACH, is refused.",
+      "bid": "dc002"
+    },
+    {
+      "kind": "text-p",
+      "text": "The node's data key works on the node's own file, and on any element's file when the call names it with ?space=<element>. Tables an element wrote into the node's file before it had its own are copied over by the architect's word (/db/claim).",
+      "bid": "dc003"
+    },
+    {
+      "kind": "text-p",
+      "text": "The database keeps the doors apart, not the disk: every file lies in this element's folder on your computer, and all elements run as one user of it.",
+      "bid": "dc004"
+    },
+    {
+      "kind": "block-section-head",
+      "id": "connect",
+      "title": "Connect your element",
+      "bid": "dd000"
+    },
+    {
+      "kind": "text-p",
+      "text": "Every element of the node already has the database address and its own key. Read ten rows of a table:",
+      "bid": "dd001"
+    },
+    {
+      "kind": "text-code",
+      "text": "const r = await fetch(`${process.env.REMOTE_DATA_URL}/db/tables/notes?limit=10`, {\n  headers: { 'X-Element-Key': process.env.ELEMENT_KEY },\n})\nconst { columns, rows, total } = await r.json()",
+      "bid": "dd002"
+    },
+    {
+      "kind": "text-p",
+      "text": "A table is declared by the element that owns it, once, at its start: CREATE TABLE IF NOT EXISTS through POST /db/migrate. A call returns at most 1000 rows, and columns such as password never leave the database.",
+      "bid": "dd003"
+    },
+    {
+      "kind": "block-section-head",
+      "id": "hood",
+      "title": "Under the hood",
+      "bid": "de000"
+    },
+    {
+      "kind": "text-table",
+      "head": [
+        "Part",
+        "What it does"
+      ],
+      "rows": [
+        [
+          "SQLite",
+          "One file for each element and one for the node, in this element's folder, never in git"
+        ],
+        [
+          "/db/tables",
+          "Rows: read with search, limit and offset, insert one, edit one by its id"
+        ],
+        [
+          "/db/migrate",
+          "The schema and any SQL, with a key only, never from a browser session"
+        ],
+        [
+          "/deploy-runs",
+          "The deploy journal of every element of the node"
+        ],
+        [
+          "/a2a-log",
+          "The agents' conversations, the last 10 000, fields named like secrets stripped"
+        ],
+        [
+          "/media, /vectors",
+          "Passed on to the storage and vectors elements, the answers unchanged"
+        ]
+      ],
+      "bid": "de001"
+    },
+    {
+      "kind": "block-section-head",
+      "id": "credits",
+      "title": "Open source",
+      "bid": "df000"
+    },
+    {
+      "kind": "text-p",
+      "text": "Built by Fractera for the [Lagrix](https://lagrix.dev) protocol and for any web2 project that needs a database. MIT license, the code is at [github.com/Fractera/fractera-data-starter](https://github.com/Fractera/fractera-data-starter).",
+      "bid": "df001"
     }
   ]
 }
