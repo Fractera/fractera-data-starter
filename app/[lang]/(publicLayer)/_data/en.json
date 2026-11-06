@@ -75,6 +75,17 @@
     },
     {
       "kind": "block-section-head",
+      "id": "power",
+      "title": "On from the start",
+      "bid": "q0000"
+    },
+    {
+      "kind": "text-p",
+      "text": "This element starts with the node. The node holds the switch: the architect turns it off or on with a word to the main agent, or on the element's settings page in the core.",
+      "bid": "q0001"
+    },
+    {
+      "kind": "block-section-head",
       "id": "solves",
       "title": "What changes for you",
       "bid": "db000"
@@ -212,6 +223,31 @@
     },
     {
       "kind": "block-section-head",
+      "id": "builder",
+      "title": "Your own builder comes with it",
+      "bid": "q0002"
+    },
+    {
+      "kind": "text-p",
+      "text": "Every element of the node comes with its own Claude Code agent and can get its own Telegram bot. When something in this element should change, write to its bot from your phone, and the agent updates the logic or the design.",
+      "bid": "q0003"
+    },
+    {
+      "kind": "text-p",
+      "text": "The agent works only in its element's folder and never reads the whole node, so each change costs fewer tokens. Your Claude Code subscription pays for it.",
+      "bid": "q0004"
+    },
+    {
+      "kind": "text-list",
+      "items": [
+        "The element's bot is connected in the core, on its «Telegram» page.",
+        "The agent returns a commit; you look at it in «Preview» and accept it or turn it down.",
+        "At the computer, the agent's terminal is in the core, in this element's «Build»."
+      ],
+      "bid": "q0005"
+    },
+    {
+      "kind": "block-section-head",
       "id": "credits",
       "title": "Open source",
       "bid": "df000"
@@ -220,6 +256,39 @@
       "kind": "text-p",
       "text": "Built by Fractera for the [Lagrix](https://lagrix.dev) protocol and for any web2 project that needs a database. MIT license, the code is at [github.com/Fractera/fractera-data-starter](https://github.com/Fractera/fractera-data-starter).",
       "bid": "df001"
+    },
+    {
+      "kind": "block-section-head",
+      "id": "faq",
+      "title": "Questions and answers",
+      "bid": "q0006"
+    },
+    {
+      "kind": "block-faq",
+      "title": "Questions and answers",
+      "items": [
+        {
+          "q": "Do I need a database schema?",
+          "a": "Each table needs one, but the node has no shared schema file. The element that owns a table declares it itself: at its start it sends CREATE TABLE IF NOT EXISTS to POST /db/migrate, and the database creates what is not there yet."
+        },
+        {
+          "q": "Who writes that declaration?",
+          "a": "The element's agent, together with the code that uses the table. You describe what to keep in words; the agent turns it into the table and its start-up migration."
+        },
+        {
+          "q": "Can one element read another's tables?",
+          "a": "No. A call with an element's own key works only with that element's file; SQL that reaches for another file, ATTACH for one, is refused. The core and the native elements open any file with the node's data key."
+        },
+        {
+          "q": "How many rows does a call return?",
+          "a": "At most 1000, and columns such as password never leave the database."
+        },
+        {
+          "q": "Can I keep backups?",
+          "a": "Yes. The element is ready for its programmer agent to set up backups on a schedule or by hand: tell the element's agent in Telegram or in the terminal. It makes no copies on its own until you ask."
+        }
+      ],
+      "bid": "q0007"
     }
   ]
 }
