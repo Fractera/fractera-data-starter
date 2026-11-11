@@ -2,13 +2,13 @@
   "title": "Fractera Data — база данных вашего узла",
   "description": "База данных, которой пользуется каждый элемент узла: у каждого свои таблицы в своём файле, журнал выкладок и записи разговоров агентов, на вашем компьютере.",
   "keywords": "",
-  "blocks": [
+  "body": [
     {
       "kind": "widget-static-data-landing",
       "bid": "dw001"
     },
     {
-      "kind": "block-hero-centered",
+      "kind": "section-hero-centered",
       "pill": "OpenSource Web4 agent & app starter kit",
       "title": "База данных вашего узла",
       "description": "Каждый элемент хранит здесь свои таблицы, каждый в своём файле базы, который открывает его собственный ключ. Здесь же журнал выкладок и записи разговоров агентов, на вашем компьютере.",
@@ -23,7 +23,7 @@
       "bid": "dh001"
     },
     {
-      "kind": "block-section-head",
+      "kind": "section-head",
       "id": "route",
       "title": "Как идёт строка",
       "bid": "da000"
@@ -74,7 +74,7 @@
       "bid": "da009"
     },
     {
-      "kind": "block-section-head",
+      "kind": "section-head",
       "id": "power",
       "title": "Работает всегда",
       "bid": "q0000"
@@ -85,7 +85,7 @@
       "bid": "q0001"
     },
     {
-      "kind": "block-section-head",
+      "kind": "section-head",
       "id": "solves",
       "title": "Что меняется для вас",
       "bid": "db000"
@@ -117,13 +117,13 @@
       "bid": "db001"
     },
     {
-      "kind": "block-section-head",
+      "kind": "section-head",
       "id": "spaces",
       "title": "Чья это таблица",
       "bid": "dc000"
     },
     {
-      "kind": "block-access-map",
+      "kind": "section-access-map",
       "outer": {
         "title": "Главный агент узла",
         "text": "Открывает файл базы каждого элемента и видит, чья каждая таблица."
@@ -161,7 +161,7 @@
       "bid": "dc004"
     },
     {
-      "kind": "block-section-head",
+      "kind": "section-head",
       "id": "connect",
       "title": "Подключить свой элемент",
       "bid": "dd000"
@@ -182,7 +182,7 @@
       "bid": "dd003"
     },
     {
-      "kind": "block-section-head",
+      "kind": "section-head",
       "id": "hood",
       "title": "Что под капотом",
       "bid": "de000"
@@ -222,7 +222,7 @@
       "bid": "de001"
     },
     {
-      "kind": "block-section-head",
+      "kind": "section-head",
       "id": "builder",
       "title": "Свой строитель в комплекте",
       "bid": "q0002"
@@ -247,7 +247,7 @@
       "bid": "q0005"
     },
     {
-      "kind": "block-section-head",
+      "kind": "section-head",
       "id": "credits",
       "title": "Открытый код",
       "bid": "df000"
@@ -258,13 +258,13 @@
       "bid": "df001"
     },
     {
-      "kind": "block-section-head",
+      "kind": "section-head",
       "id": "faq",
       "title": "Вопросы и ответы",
       "bid": "q0006"
     },
     {
-      "kind": "block-faq",
+      "kind": "section-faq",
       "title": "Вопросы и ответы",
       "items": [
         {

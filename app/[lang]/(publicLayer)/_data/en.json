@@ -2,13 +2,13 @@
   "title": "Fractera Data — the database of your node",
   "description": "The database every element of the node uses: each element its own tables in its own file, the deploy journal and the log of agent conversations, on your own computer.",
   "keywords": "",
-  "blocks": [
+  "body": [
     {
       "kind": "widget-static-data-landing",
       "bid": "dw001"
     },
     {
-      "kind": "block-hero-centered",
+      "kind": "section-hero-centered",
       "pill": "OpenSource Web4 agent & app starter kit",
       "title": "The database of your node",
       "description": "Every element keeps its tables here, each in its own database file opened by its own key. The deploy journal and the log of agent conversations live here too, on your own computer.",
@@ -23,7 +23,7 @@
       "bid": "dh001"
     },
     {
-      "kind": "block-section-head",
+      "kind": "section-head",
       "id": "route",
       "title": "How a row goes",
       "bid": "da000"
@@ -74,7 +74,7 @@
       "bid": "da009"
     },
     {
-      "kind": "block-section-head",
+      "kind": "section-head",
       "id": "power",
       "title": "Always on",
       "bid": "q0000"
@@ -85,7 +85,7 @@
       "bid": "q0001"
     },
     {
-      "kind": "block-section-head",
+      "kind": "section-head",
       "id": "solves",
       "title": "What changes for you",
       "bid": "db000"
@@ -117,13 +117,13 @@
       "bid": "db001"
     },
     {
-      "kind": "block-section-head",
+      "kind": "section-head",
       "id": "spaces",
       "title": "Whose table it is",
       "bid": "dc000"
     },
     {
-      "kind": "block-access-map",
+      "kind": "section-access-map",
       "outer": {
         "title": "The main agent of the node",
         "text": "Opens every element's database file and sees whose each table is."
@@ -161,7 +161,7 @@
       "bid": "dc004"
     },
     {
-      "kind": "block-section-head",
+      "kind": "section-head",
       "id": "connect",
       "title": "Connect your element",
       "bid": "dd000"
@@ -182,7 +182,7 @@
       "bid": "dd003"
     },
     {
-      "kind": "block-section-head",
+      "kind": "section-head",
       "id": "hood",
       "title": "Under the hood",
       "bid": "de000"
@@ -222,7 +222,7 @@
       "bid": "de001"
     },
     {
-      "kind": "block-section-head",
+      "kind": "section-head",
       "id": "builder",
       "title": "Your own builder comes with it",
       "bid": "q0002"
@@ -247,7 +247,7 @@
       "bid": "q0005"
     },
     {
-      "kind": "block-section-head",
+      "kind": "section-head",
       "id": "credits",
       "title": "Open source",
       "bid": "df000"
@@ -258,13 +258,13 @@
       "bid": "df001"
     },
     {
-      "kind": "block-section-head",
+      "kind": "section-head",
       "id": "faq",
       "title": "Questions and answers",
       "bid": "q0006"
     },
     {
-      "kind": "block-faq",
+      "kind": "section-faq",
       "title": "Questions and answers",
       "items": [
         {
